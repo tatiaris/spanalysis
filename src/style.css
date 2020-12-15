@@ -1,0 +1,70 @@
+:root {
+  --primary-color-light: #1ba5d3;
+  --color-light: white;
+  --color-dark: black;
+}
+
+*::after {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+  margin: 0px;
+}
+
+body {
+    background: #fff;
+}
+
+button {
+    border-radius: 0px !important;
+}
+
+tr td a:visited {
+    color: purple !important;
+}
+
+tr td a:hover, a:active {
+    color: black !important;
+}
+
+tr td a {
+    color: black !important;
+}
+span a {
+    color: blue !important;
+}
+
+.modal-content {
+    border-radius: 0px;
+}
+
+.table thead th {
+	border-bottom: 1px;
+}
+.progress {
+    border-radius: 0px;
+	background-color: #282c31;
+}
+.table thead th {
+	border: 0px;
+}
+table {
+    border: 0px;
+    margin-bottom: 0px !important;
+}
+@media (min-width: 768px) {
+    #page_container.row {
+        height: calc(90vh);
+    }
+    nav {
+        height: 5vh;
+    }
+    footer {
+        height: 5vh;
+    }
+}
