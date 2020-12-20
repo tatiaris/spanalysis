@@ -1,6 +1,6 @@
 import nextConnect from "next-connect";
 import middleware from "../../../middleware/database";
-const { BASE_URL, ALPACA_KEY_ID, ALPACA_SECRET_KEY } = process.env
+const { BASE_URL, ALPACA_KEY_ID, ALPACA_SECRET_KEY, NEWS_API_KEY } = process.env
 
 const handler = nextConnect();
 handler.use(middleware);
@@ -23,11 +23,35 @@ const getData = async (tkr) => {
   return Promise.resolve(tickerData)
 }
 
+const getNews = async (tkr) => {
+  let newsData = []
+
+  let weekAgo = new Date();
+  weekAgo.setDate(weekAgo.getDate() - 7);
+
+  const url = `http://newsapi.org/v2/everything?` +
+   `domains=marketwatch.com&q=${tkr}&sortBy=publishedAt&apiKey=97fb971e21c041b486ebcec3ff01b3e9`;
+  //  `domains=marketwatch.com&q=${tkr}&from=${weekAgo.getFullYear()}-${weekAgo.getMonth() + 1}-${weekAgo.getDate()}&sortBy=publishedAt&apiKey=97fb971e21c041b486ebcec3ff01b3e9`;
+
+  await fetch(url, {
+    method: 'get'}
+  ).then(response => {
+    newsData = response.json();
+  }).catch(e => console.log(e))
+
+  return Promise.resolve(newsData)
+}
+
 handler.get(async (req, res) => {
   let doc = {}
+
   await getData(req.query.symbol).then(d => {
     doc.data = d
   }).catch(e => console.log(e))
+  await getNews(req.query.symbol).then(d => {
+    doc.news = d
+  }).catch(e => console.log(e))
+
   res.json(doc);
 });
 

@@ -50,7 +50,7 @@ const Home = (): React.ReactNode => {
     return (
       <tr key={`stock-row-${i}`}>
         <th>{i+1}</th>
-        <th><a target="_blank" href={`https://www.marketwatch.com/investing/stock/${s.ticker}`}>{s.name}</a></th>
+        <th><a target="_blank" href={`/stock/${s.ticker}`}>{s.name}</a></th>
         <th>{s.ticker}</th>
         <th>${s.price}</th>
         <th style={{ color: dailyColor }}>{dailySign}{s.dailyChange}%</th>
