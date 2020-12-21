@@ -10,12 +10,24 @@ const Ticker = (): React.ReactNode => {
   const ticker = router.query.ticker;
   const [stockData, setStockData] = useState([]);
   const [stockNews, setStockNews] = useState([]);
+  const [stockOverview, setStockOverview] = useState({
+    Name: "",
+    Description: "",
+    Sector: "",
+    Industry: "",
+    Exchange: "",
+    PERatio: "",
+    DividendYield: "",
+    ProfitMargin: "",
+    MarketCapitalization: ""
+  });
 
   const loadCourses = async () => {
     const res = await fetch(`/api/ticker?symbol=${ticker}`);
     const stockData = await res.json();
     setStockData(stockData.data.reverse())
     setStockNews(stockData.news.articles);
+    setStockOverview(stockData.overview);
   };
 
   useEffect(() => {
@@ -36,7 +48,7 @@ const Ticker = (): React.ReactNode => {
     dateToday.setUTCSeconds(d.t)
 
     tkrChangeDataPoints.push({x: dateToday, y: (stockData[0].c - d.c)*100/d.c})
-    tkrVolumeDataPoints.push({x: dateToday, y: d.v})
+    tkrVolumeDataPoints.push({x: dateToday, y: d.v/1000000})
 
     tkrPriceClosePoints.push({x: dateToday, y: d.c})
     tkrPriceOpenPoints.push({x: dateToday, y: d.o})
@@ -53,7 +65,7 @@ const Ticker = (): React.ReactNode => {
       fontSize: "20"
     },
     axisY: {
-      title: "Change Since Date",
+      title: "Change Since Date (%)",
       crosshair: {
         enabled: true,
       },
@@ -82,10 +94,11 @@ const Ticker = (): React.ReactNode => {
       fontSize: "20"
     },
     axisY: {
-      title: "Volume",
+      title: "Volume (Millions)",
       crosshair: {
         enabled: true,
-      }
+      },
+      suffix: "M"
     },
     axisX: {
       title: "Date",
@@ -96,7 +109,7 @@ const Ticker = (): React.ReactNode => {
     },
     data: [{
       type: "area",
-      toolTipContent: "{x}: {y}",
+      toolTipContent: "{x}: {y}M",
       dataPoints: tkrVolumeDataPoints
     }]
   }
@@ -110,7 +123,7 @@ const Ticker = (): React.ReactNode => {
       fontSize: "20"
     },
     axisY: {
-      title: "Price",
+      title: "Price ($)",
       prefix: "$",
       crosshair: {
         enabled: true,
@@ -166,22 +179,27 @@ const Ticker = (): React.ReactNode => {
     }]
   }
 
+  let price = 0
+  if (stockData.length > 0) price = stockData[0].c
+
   const overview = (
     <Row style={{ margin: "2em" }}>
       <Col>
         <ListGroup variant="flush">
-          <ListGroup.Item>Name:</ListGroup.Item>
-          <ListGroup.Item>Sector:</ListGroup.Item>
-          <ListGroup.Item>Industry:</ListGroup.Item>
-          <ListGroup.Item>Exchange:</ListGroup.Item>
+          <ListGroup.Item>Name: <span style={{ float: "right", fontWeight: "bold" }}>{stockOverview.Name}</span></ListGroup.Item>
+          <ListGroup.Item>Price: <span style={{ float: "right", fontWeight: "bold" }}>${price}</span></ListGroup.Item>
+          <ListGroup.Item>Sector: <span style={{ float: "right", fontWeight: "bold" }}>{stockOverview.Sector}</span></ListGroup.Item>
+          <ListGroup.Item>Industry: <span style={{ float: "right", fontWeight: "bold" }}>{stockOverview.Industry}</span></ListGroup.Item>
+          <ListGroup.Item>Exchange: <span style={{ float: "right", fontWeight: "bold" }}>{stockOverview.Exchange}</span></ListGroup.Item>
         </ListGroup>
       </Col>
       <Col>
         <ListGroup variant="flush">
-          <ListGroup.Item>Price:</ListGroup.Item>
-          <ListGroup.Item>PE Ratio:</ListGroup.Item>
-          <ListGroup.Item>Dividend Yield:</ListGroup.Item>
-          <ListGroup.Item>Profit Margin:</ListGroup.Item>
+          <ListGroup.Item>PE Ratio: <span style={{ float: "right", fontWeight: "bold" }}>{stockOverview.PERatio}</span></ListGroup.Item>
+          <ListGroup.Item>Dividend Yield: <span style={{ float: "right", fontWeight: "bold" }}>{stockOverview.DividendYield}%</span></ListGroup.Item>
+          <ListGroup.Item>Profit Margin: <span style={{ float: "right", fontWeight: "bold" }}>{stockOverview.ProfitMargin}</span></ListGroup.Item>
+          <ListGroup.Item>Market Cap: <span style={{ float: "right", fontWeight: "bold" }}>${stockOverview.MarketCapitalization}</span></ListGroup.Item>
+          <ListGroup.Item>Relative Strength: <span style={{ float: "right", fontWeight: "bold" }}>{`---`}</span></ListGroup.Item>
         </ListGroup>
       </Col>
     </Row>
@@ -239,6 +257,7 @@ const Ticker = (): React.ReactNode => {
       <Mheader title={`$${ticker}`} />
       <Mnavbar theme={"light"} />
       <Container>
+        <h1 style={{ margin: "2rem 4rem" }}>Stock: <a style={{ color: "black" }} target="_blank" href={`https://www.marketwatch.com/investing/stock/${ticker}`}>${ticker}</a></h1>
         {overview}
         {charts}
         {newsSection}

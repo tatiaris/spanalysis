@@ -1,9 +1,24 @@
 import nextConnect from "next-connect";
 import middleware from "../../../middleware/database";
-const { BASE_URL, ALPACA_KEY_ID, ALPACA_SECRET_KEY, NEWS_API_KEY } = process.env
+const { BASE_URL, ALPACA_KEY_ID, ALPACA_SECRET_KEY, NEWS_API_KEY, ALPHAVANTAGE_API_KEY } = process.env
 
 const handler = nextConnect();
 handler.use(middleware);
+
+const getOverview = async (tkr) => {
+  let overviewData = {}
+  const apiUrl = `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${tkr}&apikey=${ALPHAVANTAGE_API_KEY}`
+
+  await fetch(apiUrl, {
+    method: 'get'
+  }).then (
+    response => response.json()
+  ).then ( data => {
+    overviewData = data
+  }).catch((e) => console.log(e));
+
+  return Promise.resolve(overviewData)
+}
 
 const getData = async (tkr) => {
   let tickerData = []
@@ -29,8 +44,7 @@ const getNews = async (tkr) => {
   let weekAgo = new Date();
   weekAgo.setDate(weekAgo.getDate() - 7);
 
-  const url = `http://newsapi.org/v2/everything?` +
-   `domains=marketwatch.com&q=${tkr}&sortBy=publishedAt&apiKey=97fb971e21c041b486ebcec3ff01b3e9`;
+  const url = `http://newsapi.org/v2/everything?domains=marketwatch.com&q=${tkr}&sortBy=publishedAt&apiKey=97fb971e21c041b486ebcec3ff01b3e9`;
   //  `domains=marketwatch.com&q=${tkr}&from=${weekAgo.getFullYear()}-${weekAgo.getMonth() + 1}-${weekAgo.getDate()}&sortBy=publishedAt&apiKey=97fb971e21c041b486ebcec3ff01b3e9`;
 
   await fetch(url, {
@@ -45,9 +59,14 @@ const getNews = async (tkr) => {
 handler.get(async (req, res) => {
   let doc = {}
 
+  await getOverview(req.query.symbol).then(d => {
+    doc.overview = d
+  }).catch(e => console.log(e))
+
   await getData(req.query.symbol).then(d => {
     doc.data = d
   }).catch(e => console.log(e))
+
   await getNews(req.query.symbol).then(d => {
     doc.news = d
   }).catch(e => console.log(e))
