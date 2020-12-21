@@ -206,7 +206,7 @@ const Ticker = (): React.ReactNode => {
 
   const overview = (
     <Row style={{ margin: "2em" }}>
-      <Col>
+      <Col sm="6">
         <ListGroup variant="flush">
           <ListGroup.Item>Name: <span style={{ float: "right", fontWeight: "bold" }}>{stockOverview.Name}</span></ListGroup.Item>
           <ListGroup.Item>Price: <span style={{ float: "right", fontWeight: "bold" }}>${price}</span></ListGroup.Item>
@@ -215,7 +215,7 @@ const Ticker = (): React.ReactNode => {
           <ListGroup.Item>Exchange: <span style={{ float: "right", fontWeight: "bold" }}>{stockOverview.Exchange}</span></ListGroup.Item>
         </ListGroup>
       </Col>
-      <Col>
+      <Col sm="6">
         <ListGroup variant="flush">
           <ListGroup.Item>PE Ratio: <span style={{ float: "right", fontWeight: "bold" }}>{stockOverview.PERatio}</span></ListGroup.Item>
           <ListGroup.Item>Dividend Yield: <span style={{ float: "right", fontWeight: "bold" }}>{stockOverview.DividendYield}%</span></ListGroup.Item>
@@ -277,8 +277,8 @@ const Ticker = (): React.ReactNode => {
     <>
       <Mheader title={`$${ticker}`} />
       <Mnavbar theme={"light"} />
-      <Container>
-        <h1 style={{ margin: "1rem 2rem", padding: "1rem 2rem", borderBottom: "1px solid #b5b5b5" }}>Stock: <a style={{ color: "black" }} target="_blank" href={`https://www.marketwatch.com/investing/stock/${ticker}`}>${ticker}</a></h1>
+      <Container style={{ maxWidth: "100vw" }}>
+        <h1 style={{ margin: "1rem 2rem", padding: "1rem 2rem", borderBottom: "1px solid #b5b5b5" }}><a style={{ color: "black" }} target="_blank" href={`https://www.marketwatch.com/investing/stock/${ticker}`}>${ticker}</a></h1>
         {overview}
         {charts}
         {newsSection}
