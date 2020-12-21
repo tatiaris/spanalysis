@@ -277,7 +277,7 @@ const Ticker = (): React.ReactNode => {
     <>
       <Mheader title={`$${ticker}`} />
       <Mnavbar theme={"light"} />
-      <Container style={{ maxWidth: "100vw" }}>
+      <Container style={{ width: "100vw" }}>
         <h1 style={{ margin: "1rem 2rem", padding: "1rem 2rem", borderBottom: "1px solid #b5b5b5" }}><a style={{ color: "black" }} target="_blank" href={`https://www.marketwatch.com/investing/stock/${ticker}`}>${ticker}</a></h1>
         {overview}
         {charts}
