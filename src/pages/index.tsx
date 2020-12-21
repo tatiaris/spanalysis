@@ -94,7 +94,6 @@ const Home = (): React.ReactNode => {
     <>
         <Mheader title={"Overview"}/>
         <Mnavbar theme="light"/>
-        {loadingSign}
         <Col style={{ padding: "0" }}>
           <Table
             striped
@@ -117,6 +116,7 @@ const Home = (): React.ReactNode => {
             <tbody>{stockTable}</tbody>
           </Table>
         </Col>
+        {loadingSign}
         <MFooter/>
     </>
   );
