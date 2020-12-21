@@ -10,7 +10,7 @@ export const Mnavbar: React.FC<MnavbarProps> = (props) => {
   return (
     <>
       <Navbar style={{ backgroundColor: "aquamarine !important" }} collapseOnSelect expand="lg" bg={props.theme} variant={props.theme}>
-        <Navbar.Brand href="/">S&P 500 Stock Analysis</Navbar.Brand>
+        <Navbar.Brand href="/">S&P 500 Market Analysis</Navbar.Brand>
       </Navbar>
     </>
   );

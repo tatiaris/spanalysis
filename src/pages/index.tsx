@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { MFooter } from "../components/MFooter";
 import { Mheader } from "../components/Mheader";
 import { Mnavbar } from "../components/Mnavbar";
-import { Table, Container, Button, Col, Row } from "react-bootstrap";
+import { Table, Container, Button, Col, Row, Spinner } from "react-bootstrap";
 import { ThBtn } from "../components/style"
 
 const Home = (): React.ReactNode => {
@@ -83,6 +83,9 @@ const Home = (): React.ReactNode => {
     setCompanySortDir(companySortDir * -1)
   }
 
+  let loadingSign = <Container style={{ width: "100%", textAlign: "center" }}><Spinner style={{ margin: "2em" }} animation="border" /></Container> 
+  if (stocks.length > 0) loadingSign = <></>
+
   useEffect(() => {
     loadStocks();
   }, [])
@@ -91,6 +94,7 @@ const Home = (): React.ReactNode => {
     <>
         <Mheader title={"Overview"}/>
         <Mnavbar theme="light"/>
+        {loadingSign}
         <Col style={{ padding: "0" }}>
           <Table
             striped
