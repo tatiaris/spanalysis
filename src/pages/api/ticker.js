@@ -67,6 +67,10 @@ handler.get(async (req, res) => {
     doc.data = d
   }).catch(e => console.log(e))
 
+  await getData('SPY').then(d => {
+    doc.spyData = d
+  }).catch(e => console.log(e))
+
   await getNews(req.query.symbol).then(d => {
     doc.news = d
   }).catch(e => console.log(e))

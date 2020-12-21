@@ -10,6 +10,7 @@ const Ticker = (): React.ReactNode => {
   const ticker = router.query.ticker;
   const [stockData, setStockData] = useState([]);
   const [stockNews, setStockNews] = useState([]);
+  const [spyData, setSpyData] = useState([]);
   const [stockOverview, setStockOverview] = useState({
     Name: "",
     Description: "",
@@ -25,6 +26,7 @@ const Ticker = (): React.ReactNode => {
   const loadCourses = async () => {
     const res = await fetch(`/api/ticker?symbol=${ticker}`);
     const stockData = await res.json();
+    setSpyData(stockData.spyData.reverse());
     setStockData(stockData.data.reverse())
     setStockNews(stockData.news.articles);
     setStockOverview(stockData.overview);
@@ -35,6 +37,8 @@ const Ticker = (): React.ReactNode => {
   }, [ticker]);
 
   let tkrChangeDataPoints = []
+  let spyChangeDataPoints = []
+
   let tkrVolumeDataPoints = []
 
   let tkrPriceClosePoints = []
@@ -47,7 +51,9 @@ const Ticker = (): React.ReactNode => {
     dateToday = new Date(0)
     dateToday.setUTCSeconds(d.t)
 
-    tkrChangeDataPoints.push({x: dateToday, y: (stockData[0].c - d.c)*100/d.c})
+    tkrChangeDataPoints.push({x: dateToday, y: (stockData[0].c - d.c)/d.c})
+    spyChangeDataPoints.push({x: dateToday, y: (spyData[0].c - spyData[i].c)/spyData[i].c})
+
     tkrVolumeDataPoints.push({x: dateToday, y: d.v/1000000})
 
     tkrPriceClosePoints.push({x: dateToday, y: d.c})
@@ -61,7 +67,7 @@ const Ticker = (): React.ReactNode => {
     exportEnabled: true,
     theme: "light2",
     title: {
-      text: `$${ticker} Change since Date`,
+      text: `$${ticker} vs $SPY Relative Strength`,
       fontSize: "20"
     },
     axisY: {
@@ -69,7 +75,7 @@ const Ticker = (): React.ReactNode => {
       crosshair: {
         enabled: true,
       },
-      suffix: "%"
+      valueFormatString: "##.##%"
     },
     axisX: {
       title: "Date",
@@ -78,10 +84,29 @@ const Ticker = (): React.ReactNode => {
         snapToDataPoint: true
       }
     },
+    toolTip: {
+      shared: true,
+      suffix: "%"
+    },
+    legend: {
+      cursor: "pointer",
+      verticalAlign: "top",
+      horizontalAlign: "center",
+      dockInsidePlotArea: true,
+    },
     data: [{
       type: "area",
-      toolTipContent: "{x}: {y}%",
+      name: `$${ticker}`,
+      showInLegend: true,
+      yValueFormatString: "##.##%",
       dataPoints: tkrChangeDataPoints
+    },
+    {
+      type: "area",
+      name: "$SPY",
+      showInLegend: true,
+      yValueFormatString: "##.##%",
+      dataPoints: spyChangeDataPoints
     }]
   }
   const stockVolumeAreaChart = {
@@ -127,9 +152,6 @@ const Ticker = (): React.ReactNode => {
       prefix: "$",
       crosshair: {
         enabled: true,
-      },
-      scaleBreaks: {
-        autoCalculate: true
       }
     },
     axisX: {
@@ -236,15 +258,14 @@ const Ticker = (): React.ReactNode => {
         <Row style={{ margin: "2em", display: "flex", overflow: "scroll", flexWrap: "nowrap" }}>
         {stockNews.map((n, i) => {
           const datePublished = new Date(n.publishedAt)
-          return <Card key={`news-card-${i}`} style={{ minWidth: "20em" }}>
+          return <Card key={`news-card-${i}`} style={{ minWidth: "18em" }}>
             <Card.Img variant="top" src={n.urlToImage} />
             <Card.Body>
               <a href={n.url}><Card.Title style={{ color: 'black' }}>{n.title}</Card.Title></a>
-              <Card.Subtitle className="mb-2 text-muted">{n.source.name}</Card.Subtitle>
+              <Card.Subtitle className="mb-2 text-muted">{n.source.name}, {datePublished.toDateString()}</Card.Subtitle>
               <Card.Text>
                 {n.description}
               </Card.Text>
-              <Card.Subtitle className="mb-2 text-muted">{datePublished.toDateString()}</Card.Subtitle>
             </Card.Body>
           </Card>
         })}
@@ -257,7 +278,7 @@ const Ticker = (): React.ReactNode => {
       <Mheader title={`$${ticker}`} />
       <Mnavbar theme={"light"} />
       <Container>
-        <h1 style={{ margin: "2rem 4rem" }}>Stock: <a style={{ color: "black" }} target="_blank" href={`https://www.marketwatch.com/investing/stock/${ticker}`}>${ticker}</a></h1>
+        <h1 style={{ margin: "1rem 2rem", padding: "1rem 2rem", borderBottom: "1px solid #b5b5b5" }}>Stock: <a style={{ color: "black" }} target="_blank" href={`https://www.marketwatch.com/investing/stock/${ticker}`}>${ticker}</a></h1>
         {overview}
         {charts}
         {newsSection}
