@@ -37,7 +37,8 @@ const getAdditionalInfo = async (tkrs) => {
         const monthAgoData = priceList[priceList.length - 21]
         const sixMonthAgoData = priceList[priceList.length - 126]
         const yearAgoData = priceList[priceList.length - 253]
-        info.name = tickers[tkr]
+        info.name = tickers[tkr].name
+        info.sector = tickers[tkr].sector
         info.ticker = tkr
         info.price = todayData.c
 

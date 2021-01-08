@@ -14,6 +14,7 @@ const Home = (): React.ReactNode => {
   const [sixMonthlyPercentSortDir, setSixMonthlyPercentSortDir] = useState(-1);
   const [yearlyPercentSortDir, setYearlyPercentSortDir] = useState(-1);
   const [companySortDir, setCompanySortDir] = useState(-1);
+  const [sectorSortDir, setSectorSortDir] = useState(-1);
   const stockTable = stocks.map((s, i) => {
     let dailyColor = "#28a745";
     let dailySign = "+";
@@ -50,8 +51,9 @@ const Home = (): React.ReactNode => {
     return (
       <tr key={`stock-row-${i}`}>
         <th>{i+1}</th>
-        <th><a target="_blank" href={`/stock/${s.ticker}`}>{s.name}</a></th>
         <th>{s.ticker}</th>
+        <th><a target="_blank" href={`/stock/${s.ticker}`}>{s.name}</a></th>
+        <th>{s.sector}</th>
         <th>${s.price}</th>
         <th style={{ color: dailyColor }}>{dailySign}{s.dailyChange}%</th>
         <th style={{ color: weeklyColor }}>{weeklySign}{s.weeklyChange}%</th>
@@ -82,6 +84,13 @@ const Home = (): React.ReactNode => {
     setStocks(stocksCopy)
     setCompanySortDir(companySortDir * -1)
   }
+  const sortBySector = () => {
+    let stocksCopy = stocks.sort((a, b) => {
+      return ((a.sector.toLowerCase() < b.sector.toLowerCase()) ? (1 * sectorSortDir) : ((a.sector.toLowerCase() > b.sector.toLowerCase()) ? (-1 * sectorSortDir) : 0))
+    })
+    setStocks(stocksCopy)
+    setSectorSortDir(sectorSortDir * -1)
+  }
 
   let loadingSign = <Container style={{ width: "100%", textAlign: "center" }}><Spinner style={{ margin: "2em" }} animation="border" /></Container> 
   if (stocks.length > 0) loadingSign = <></>
@@ -103,8 +112,9 @@ const Home = (): React.ReactNode => {
             <thead style={{ background: "#b1ffe5" }}>
               <tr>
                 <th>#</th>
-                <ThBtn><Button onClick={sortByCompany} style={{ padding: "0px", background: "transparent", border: "0px", fontWeight: "bold", color: "black" }}>Company</Button></ThBtn>
                 <th>Ticker</th>
+                <ThBtn><Button onClick={sortByCompany} style={{ padding: "0px", background: "transparent", border: "0px", fontWeight: "bold", color: "black" }}>Company</Button></ThBtn>
+                <ThBtn><Button onClick={sortBySector} style={{ padding: "0px", background: "transparent", border: "0px", fontWeight: "bold", color: "black" }}>Sector</Button></ThBtn>
                 <ThBtn><Button onClick={e => valueSort(priceSortDir, setPriceSortDir, 'price')} style={{ padding: "0px", background: "transparent", border: "0px", fontWeight: "bold", color: "black" }}>Price</Button></ThBtn>
                 <ThBtn><Button onClick={e => valueSort(percentSortDir, setPercentSortDir, 'dailyChange')} style={{ padding: "0px", background: "transparent", border: "0px", fontWeight: "bold", color: "black" }}>1 Day</Button></ThBtn>
                 <ThBtn><Button onClick={e => valueSort(weeklyPercentSortDir, setWeeklyPercentSortDir, 'weeklyChange')} style={{ padding: "0px", background: "transparent", border: "0px", fontWeight: "bold", color: "black" }}>1 Week</Button></ThBtn>
