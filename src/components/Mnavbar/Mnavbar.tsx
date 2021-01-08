@@ -9,7 +9,7 @@ import { Navbar, Nav, Form, FormControl, Button, NavDropdown } from "react-boots
 export const Mnavbar: React.FC<MnavbarProps> = (props) => {
   return (
     <>
-      <Navbar style={{ backgroundColor: "aquamarine !important" }} collapseOnSelect expand="lg" bg={props.theme} variant={props.theme}>
+      <Navbar style={{ backgroundColor: "aquamarine !important" }} collapseOnSelect expand="lg" bg={props.theme} variant={props.theme} sticky="top">
         <Navbar.Brand href="/">S&P 500 Market Analysis</Navbar.Brand>
       </Navbar>
     </>
